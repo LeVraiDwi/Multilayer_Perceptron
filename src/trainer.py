@@ -11,9 +11,11 @@ class MLP:
             DenseLayer(hidden_dim, output_dim)  # Output Layer
         ]
 
-    def fit(self, X_train, y_train, X_val, y_val, epochs=100, learning_rate=0.5):
+    def fit(self, X_train, y_train, X_val, y_val, epochs=100, learning_rate=0.5, break_count = 2, min_delta = 0.0001):
         self.batch_size = X_train.shape[0]
+        self.best_val_loss = 100
         stats = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
+        count = 0
 
         for epoch in range(epochs):
             # 1. Forward Pass
@@ -36,6 +38,16 @@ class MLP:
             stats["val_loss"].append(val_loss)
             stats["val_acc"].append(val_acc)
             stats["train_acc"].append(acc)
+
+            if val_loss < (self.best_val_loss - min_delta):
+                self.best_val_loss = val_loss
+                count = 0
+            else:
+                count += 1
+                if count >= break_count:
+                    print(f"Epoch {epoch}: Loss {loss:.4f} - Acc {acc:.2%}")
+                    break
+
             if epoch % 10 == 0:
                 print(f"Epoch {epoch}: Loss {loss:.4f} - Acc {acc:.2%}")
             
