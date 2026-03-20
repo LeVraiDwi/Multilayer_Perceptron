@@ -14,7 +14,5 @@ class min_max_scaler(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X):
-        # On appelle votre fonction existante ici
-        ret = (X - self.min) / ((self.max - self.min) + 1e-8)
-        print(ret)
-        return ret
+        # Adding a tiny epsilon (1e-8)to prevent division by zero 
+        return (X - self.min) / (self.max - self.min + 1e-8)
